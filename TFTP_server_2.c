@@ -70,6 +70,7 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
     socklen_t from_len = sizeof(from);
 
     while ((nread = fread(buffer + 4, 1, BLOCK_SIZE, file)) > 0) {
+        //printf("nread: %d\n",nread);
         buffer[0] = 0; // Opcode for DATA
         buffer[1] = 3;
         buffer[2] = (block_number >> 8) & 0xFF; // Block Number. This will be incrementing
@@ -77,16 +78,19 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
 
         retry_count = 0;
         while (retry_count < 5) {
-            if (sendto(sockfd, buffer, nread + 4, 0, (struct sockaddr *) client_addr, client_length) < 0) {
+            int success=sendto(sockfd, buffer, nread + 4, 0, (struct sockaddr *) client_addr, client_length);
+            if (success< 0) {
                 perror("sendto failed");
                 break;
             }
+            
 
             fd_set read_fds;
             struct timeval timeout;
 
             FD_ZERO(&read_fds);
             FD_SET(sockfd, &read_fds);
+
 
             timeout.tv_sec = 2;  // Set timeout (e.g., 2 seconds)
             timeout.tv_usec = 0;
@@ -99,13 +103,24 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
                 ack_len = recvfrom(sockfd, ack_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&from, &from_len);
                 if (ack_len >= 4 && ack_buffer[1] == 4 &&  // Opcode for ACK
                     (((ack_buffer[2] << 8) | ack_buffer[3]) == block_number)) {
+                        /*if(nread==512)
+                        {
+                        printf("nread: %d\n",nread);
+                        printf("Send NULL:\n");
+                        sendto(sockfd, buffer, 4, 0, (struct sockaddr *) client_addr, client_length);
+                        ack_len = recvfrom(sockfd, ack_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&from, &from_len);
+                        if(ack_buffer[1]==4)
+                        printf("NULL ack received\n");
+                        }*/
                     break;  // Correct ACK received
                 }
             }
-
+            
             retry_count++;
             printf("Retrying block %d\n", block_number);
         }
+        
+        
         if(retry_count>=5)
         {
         printf("Client is disconnected. File transfer failed\n");
@@ -116,6 +131,16 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
 
         block_number++;
     }
+    printf("nread: %d\n",nread);
+     if(nread==512)
+        {
+            printf("nread: %d\n",nread);
+            printf("Send NULL:\n");
+            sendto(sockfd, buffer, 4, 0, (struct sockaddr *) client_addr, client_length);
+            ack_len = recvfrom(sockfd, ack_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&from, &from_len);
+            if(ack_buffer[1]==4)
+            printf("NULL ack received\n");
+        }
     
     printf("Transfer completed for %s\n", filename);
     fclose(file);

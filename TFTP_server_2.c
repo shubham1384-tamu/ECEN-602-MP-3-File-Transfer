@@ -91,6 +91,7 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
             FD_ZERO(&read_fds);
             FD_SET(sockfd, &read_fds);
 
+
             timeout.tv_sec = 2;  // Set timeout (e.g., 2 seconds)
             timeout.tv_usec = 0;
 

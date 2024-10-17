@@ -1,0 +1,4 @@
+This file is sent from client side to server side to check if the bonus feature works.
+We should also expect to receive the same file back from the server side.
+Compare both files.
+

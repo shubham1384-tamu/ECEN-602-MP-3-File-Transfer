@@ -15,6 +15,7 @@
 
 #define ERROR_FILE_NOT_FOUND 1
 #define ACK 4
+#define MAX_TRIES 10
 
 void die(char *s) {
     perror(s);
@@ -35,10 +36,10 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("File not found: %s\n", filename);
-        char* message="File not found";
+        char* message = "File not found";
         char error_msg[1024];
         error_msg[0] = 0; error_msg[1] = 5; error_msg[2] = 0; error_msg[3] = 1;
-        strcpy(error_msg+4, message);
+        strcpy(error_msg + 4, message);
         sendto(sockfd, error_msg, strlen(message) + 4, 0, (struct sockaddr *) client_addr, client_length);
         printf("Exiting child process\n");
         close(sockfd);
@@ -49,6 +50,9 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
     int block_number = 1;
     char buffer[BUFFER_SIZE];
     int nread;
+    int retry_count;
+    fd_set read_fds;
+    struct timeval timeout;
 
     do {
         nread = fread(buffer + 4, 1, BLOCK_SIZE, file);
@@ -56,15 +60,42 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
         buffer[1] = 3; // Data opcode
         buffer[2] = (block_number >> 8) & 0xFF;
         buffer[3] = block_number & 0xFF;
-        sendto(sockfd, buffer, nread + 4, 0, (struct sockaddr *) client_addr, client_length);
-        printf("Data packet %d sent, size %d\n", block_number, nread);
 
-        char ack_buffer[4];
-        recvfrom(sockfd, ack_buffer, 4, 0, (struct sockaddr *) client_addr, &client_length);
+        retry_count = 0;
+        while (retry_count < MAX_TRIES) {
+            sendto(sockfd, buffer, nread + 4, 0, (struct sockaddr *) client_addr, client_length);
+            printf("Data packet %d sent, size %d\n", block_number, nread);
+
+            FD_ZERO(&read_fds);
+            FD_SET(sockfd, &read_fds);
+            timeout.tv_sec = 2;  // 2 seconds timeout
+            timeout.tv_usec = 0;
+
+            int sel = select(sockfd + 1, &read_fds, NULL, NULL, &timeout);
+            if (sel > 0) {
+                char ack_buffer[4];
+                int len = recvfrom(sockfd, ack_buffer, 4, 0, (struct sockaddr *) client_addr, &client_length);
+                if (len >= 4 && ack_buffer[1] == ACK && 
+                    ((ack_buffer[2] << 8) | ack_buffer[3]) == block_number) {
+                    break; // ACK received, break out of retry loop
+                }
+            } else if (sel == 0) {
+                printf("Timeout, retrying %d...\n", block_number);
+                retry_count++;
+            } else {
+                perror("select error");
+                break;
+            }
+        }
+        if (retry_count == MAX_TRIES) {
+            printf("Max retries reached\n Closing child process\n");
+            fclose(file);
+            close(sockfd);
+            exit(1);
+        }
         block_number++;
     } while (nread == BLOCK_SIZE);
 
-    // Send the last empty packet if the file size is a multiple of 512 bytes
     if (nread == 0) {
         buffer[0] = 0;
         buffer[1] = 3;
@@ -78,6 +109,7 @@ void send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_len
     close(sockfd);
     printf("Transfer completed for %s\n", filename);
 }
+
 
 void receive_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_length, char *filename) {
     FILE *file = fopen(filename, "w");

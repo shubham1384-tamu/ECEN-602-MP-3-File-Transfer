@@ -68,6 +68,12 @@ In this test case, we transfer a binary file of 34MB and see if block number wra
 5. **Try to transfer an invalid file**
 In this test case, we check that we receive an error message if we try to transfer a file that does not exist and that our server cleans up and the child process exits.
 
+**Client Side Terminal**
+![Test Case 5 client terminal screenshot](Screenshots/TS5_client_terminal.png)
+
+**Server Side Terminal**
+![Test Case 5 server terminal screenshot](Screenshots/TS5_server_terminal.png)
+
 6. **Transfer a file to three client simultaneously**
 In this test case, we check that we receive the same file on three different client directories simultaneously.
 
@@ -75,7 +81,23 @@ In this test case, we check that we receive the same file on three different cli
 In this test case, we terminate the TFTP client in the middle of a transfer and see if our TFTP server realizes that the client got dissconnected after 10 timeouts.
 
 8. **Bonus Feature: WRQ for a Binary file**
-In this test case, we implement the WRQ bonus feature on a binary file.
+In this test case, we implement the WRQ bonus feature on both binary and netascii files.
 
-9. **Bonus Feature: WRQ for a Netascii file**
-In this test case, we implement the WRQ bonus feature on a netascii file.
+
+**Client Side Terminal**
+![Test Case 8 client terminal screenshot](Screenshots/TS8_client_terminal.png)
+
+**Server Side Terminal**
+![Test Case 8 server terminal screenshot](Screenshots/TS8_server_terminal.png)
+
+**Client Side Directory Before & After**
+![Test Case 8 client directory screenshot](Screenshots/TS8_client_Directory.png)
+
+**Server Side Directory Before & After**
+![Test Case 8 server directory screenshot](Screenshots/TS8_server_Directory.png)
+
+**Binary Files Comparison**
+![Test Case 8 binary files comparison screenshot](Screenshots/TS8_binary_files_comparison.png)
+
+**Netascii Files Comparison**
+![Test Case 8 netascii files comparison screenshot](Screenshots/TS8_netascii_files_comparison.png)

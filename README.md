@@ -80,6 +80,12 @@ In this test case, we check that we receive the same file on three different cli
 7. **Terminate a client while recieving a file**
 In this test case, we terminate the TFTP client in the middle of a transfer and see if our TFTP server realizes that the client got dissconnected after 10 timeouts.
 
+**Client Side Terminal**
+![Test Case 7 client terminal screenshot](Screenshots/TS7_client_terminal.png)
+
+**Server Side Terminal**
+![Test Case 7 server terminal screenshot](Screenshots/TS7_server_terminal.png)
+
 8. **Bonus Feature: WRQ for a Binary file**
 In this test case, we implement the WRQ bonus feature on both binary and netascii files.
 

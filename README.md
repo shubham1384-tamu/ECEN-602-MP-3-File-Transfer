@@ -1,4 +1,5 @@
 # ECEN-602-MP-3-File-Transfer
+# Group#8 (Shubham Santosh & Ibrahim Shahbaz )
 
 This project implements the Trivial File Transfer Protocol (TFTP) server. TFTP is tested on transfrerring different files between two a server and a client using the User Datagram Protocol (UDP). We have implemented the server side only, while for the client side we installed the tftp package (sudo apt-get install tftp-hpa) and used it to create client instances to perfom both Read Request (RRQ) and Write Request (WRQ) functions.
 

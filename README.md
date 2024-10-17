@@ -85,7 +85,14 @@ In this test case, a netascii file that includes two CR’s is transfered from s
 4. **Transfer a binary file of size 34MB**
 In this test case, we transfer a binary file of 34MB and see if block number wrap-around works.
 
+**Client Side Terminal**
+![Test Case 4 client terminal screenshot](Screenshots/TS4_client_terminal.png)
 
+**Server Side Terminal**
+![Test Case 4 server terminal screenshot](Screenshots/TS4_server_terminal.png)
+
+**Client Side Directory After Transfer**
+![Test Case  client directory screenshot](Screenshots/TS4_client_Directory.png)
 
 
 5. **Try to transfer an invalid file**

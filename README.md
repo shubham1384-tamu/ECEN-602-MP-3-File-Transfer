@@ -25,7 +25,6 @@ In this test case, a file of size 2048 Bytes is transfred from server to client 
 **Files Comparison**
 ![Test Case 1 files comparison screenshot](Screenshots/TS1_client_files_comparison.png)
 
-
 2. **Transfer a binary file of size=2047 Bytes**
  
 In this test case, a file of size 2047 Bytes is transfred from server to client directory and we check that it matches the source file.

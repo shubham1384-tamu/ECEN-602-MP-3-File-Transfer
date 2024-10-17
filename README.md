@@ -9,25 +9,25 @@ This project implements the Trivial File Transfer Protocol (TFTP) server. TFTP i
 
 ## Test Case Execution
 
-1. Transfer a binary file of size=2048 Bytes and check that it matches the source file.
+1. **Transfer a binary file of size=2048 Bytes and check that it matches the source file.**
  
 In this test case, 
 
 
-2. Transfer a binary file of size=2047 Bytes and check that it matches the source file.
+2. **Transfer a binary file of size=2047 Bytes and check that it matches the source file.**
  
 In this test case, three clients are connected to the server. The server is able to broadcast messages sent by clients alongside their usernames.
 
-Client Side Terminal
+**Client Side Terminal**
 ![Test Case 2 client terminal screenshot](Screenshots/TS2_client_terminal.png)
 
-Server Side Terminal
+**Server Side Terminal**
 ![Test Case 2 server terminal screenshot](Screenshots/TS2_server_terminal.png)
 
-Client Side Directory Before & After
+**Client Side Directory Before & After**
 ![Test Case 2 client directory screenshot](Screenshots/TS2_client_Directory.png)
 
-Files Comparison
+**Files Comparison**
 ![Test Case 2 files comparison screenshot](Screenshots/TS2_client_files_comparison.png)
 
 
